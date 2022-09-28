@@ -1,0 +1,1 @@
+..\..\EntornoVirtual\sapa\Scripts\activate
