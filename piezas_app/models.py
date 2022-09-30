@@ -2,14 +2,14 @@ from django.db import models
 
 # Create your models here.
 class Moneda(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     value = models.FloatField()
 
     def __str__(self):
         return self.name   
 
 class Marca(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name  
@@ -24,19 +24,37 @@ class Modelo(models.Model):
  
 
 class TipoPieza(models.Model):
-    name = models.CharField(max_length=255)
-    
+    name = models.CharField(max_length=255, unique=True)
     def __str__(self):
         return self.name   
 
 class Estado(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name  
+#*********************** ManyToMany Examples
+# class Publication(models.Model):
+#     title = models.CharField(max_length=30)
+
+#     class Meta:
+#         ordering = ['title']
+
+#     def __str__(self):
+#         return self.title
+
+# class Article(models.Model):
+#     headline = models.CharField(max_length=100)
+#     publications = models.ManyToManyField(Publication)
+
+#     class Meta:
+#         ordering = ['headline']
+
+#     def __str__(self):
+#         return self.headline
 
 class Pieza(models.Model):    
-    modelo = models.ForeignKey(Modelo, on_delete=models.CASCADE)#TODO: cambiar a muchos
+    modelo = models.ManyToManyField(Modelo)#TODO: cambiar a muchos
     # https://docs.djangoproject.com/en/dev/ref/models/fields/#manytomanyfield
     tipoPieza = models.ForeignKey(TipoPieza, on_delete=models.CASCADE)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE)
@@ -46,7 +64,10 @@ class Pieza(models.Model):
     priority = models.IntegerField()
 
     def __str__(self):
-        return self.marca.__str__()+"/"+self.modelo.__str__()+"/"+self.tipoPieza.__str__()   
+        modelos= ""
+        for s in self.modelo.all():
+            modelos +=s.__str__()+";"
+        return self.tipoPieza.__str__()+"/"+modelos[:-1]   
 
 class Location(models.Model):
     name = models.CharField(max_length=255)
